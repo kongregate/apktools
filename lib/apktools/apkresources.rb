@@ -218,13 +218,13 @@ class ApkResources
 				## TODO: Vary the size of the config structure based on size to accomodate for new flags
 				config_size = read_word(data, current+20) # Number of bytes in structure
 				type_config = ResTypeConfig.new( read_word(data, current+24),
-						read_word(data, current+28),
-						read_word(data, current+32),
-						read_word(data, current+36 ),
-						read_word(data, current+40),
-						read_word(data, current+44),
-						read_word(data, current+48),
-						read_word(data, current+52) )
+						(config_size > 8 ? read_word(data, current+28) : 0),
+						(config_size > 12 ? read_word(data, current+32) : 0),
+						(config_size > 16 ? read_word(data, current+36) : 0),
+						(config_size > 20 ? read_word(data, current+40) : 0),
+						(config_size > 24 ? read_word(data, current+44) : 0),
+						(config_size > 28 ? read_word(data, current+48) : 0),
+						(config_size > 32 ? read_word(data, current+52) : 0))
 
 				## The remainder of the chunk is a list of the entry values for that type/configuration
 				type_name = @stringpool_typestrings.values[type_id - 1]				
@@ -241,7 +241,7 @@ class ApkResources
 					current_entry = current_spec.types.entries[i]
 
 					## Get the start of the type from the offsets table
-					index_offset = i * 4 + (current+56)
+					index_offset = i * 4 + (current+config_size+20)
 					start_offset = read_word(data, index_offset)
 					if start_offset != OFFSET_NO_ENTRY
 						## Set the index_offset to the start of the current entry
