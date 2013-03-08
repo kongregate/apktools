@@ -142,8 +142,7 @@ class ApkResources
 		header_package_count = read_word(data, HEADER_START+8)
 		puts "Resource Package Count = #{header_package_count}" if DEBUG
 		if header_package_count > 1
-			puts "ApkResources only supports single package resources."
-			exit(1)
+			raise ArgumentError.new("ApkResources only supports single package resources.")
 		end
 		
 		# Parse the StringPool Chunk
